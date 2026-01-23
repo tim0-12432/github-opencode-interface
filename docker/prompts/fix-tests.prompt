@@ -1,0 +1,20 @@
+The tests are failing. Your task is to fix the code so tests pass.
+
+## Issue Context
+{{ISSUE_CONTEXT}}
+
+## Test Output (Failures)
+{{TEST_OUTPUT}}
+
+## Your Task
+
+1. Analyze the test failures above
+2. Identify what's wrong - could be:
+   - Bug in the implementation
+   - Bug in the tests themselves
+   - Missing edge cases
+   - Wrong assumptions
+3. Fix the issues
+4. Do NOT remove tests just to make them pass - fix the actual problems
+
+Focus on making the tests pass while still correctly solving the issue.

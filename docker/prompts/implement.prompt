@@ -1,0 +1,18 @@
+Implement the solution for this GitHub issue.
+
+## Issue Context
+{{ISSUE_CONTEXT}}
+
+{{REVIEW_FEEDBACK}}
+
+## Your Task
+
+1. Look at the analysis in `/workspace/.analysis_result` if it exists
+2. Implement the changes needed to solve the issue
+3. Follow the existing code style and patterns
+4. Make minimal, focused changes - don't refactor unrelated code
+5. Ensure your changes are complete and working
+
+If there's review feedback above, address those specific concerns.
+
+Implement the solution now.

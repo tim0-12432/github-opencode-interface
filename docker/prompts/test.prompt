@@ -1,0 +1,19 @@
+You are adding tests for the changes made to fix a GitHub issue.
+
+## Issue Context
+{{ISSUE_CONTEXT}}
+
+## Your Task
+
+1. Review the changes that were made (use `git diff`)
+2. Identify what needs to be tested
+3. Add appropriate test cases
+
+Guidelines:
+- Test the happy path
+- Test edge cases
+- Test error conditions
+- Follow existing test patterns
+- Use descriptive test names
+
+Add the tests now.

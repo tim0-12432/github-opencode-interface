@@ -1,0 +1,24 @@
+You are analyzing a GitHub issue to understand what needs to be done.
+
+## Issue Context
+{{ISSUE_CONTEXT}}
+
+## Your Task
+
+1. Read and understand the issue thoroughly
+2. Explore the codebase to understand the relevant parts
+3. Identify the files that need to be modified
+4. Create a brief implementation plan
+
+Use the available tools to:
+- Search for relevant code (`rg`, `grep`)
+- Read files to understand the current implementation
+- Understand the project structure
+
+After analysis, create a file `/workspace/plan.md` with:
+- Summary of the issue
+- Files to modify
+- Approach to fix
+- Potential risks
+
+Do NOT make any changes yet - this is analysis only.

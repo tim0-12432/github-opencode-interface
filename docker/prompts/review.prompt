@@ -1,0 +1,28 @@
+You are doing a final review before committing the changes.
+
+## Issue Context
+{{ISSUE_CONTEXT}}
+
+## Your Task
+
+1. Review all changes with `git diff`
+2. Check for:
+   - **Correctness**: Does it actually solve the issue?
+   - **Quality**: Is the code clean and maintainable?
+   - **Tests**: Are there adequate tests? Do they test the right things?
+   - **No debug code**: Remove any console.log, print statements, etc.
+   - **No unintended changes**: Only changes related to the issue
+
+3. **Decision:**
+
+   **If you find significant issues that MUST be fixed:**
+   - Write detailed feedback to `/workspace/.state/review_feedback`
+   - Do NOT create `/workspace/.state/review_passed`
+   
+   **If everything looks good OR only minor issues exist:**
+   - Run: `touch /workspace/.state/review_passed`
+   - Do NOT write to review_feedback
+
+Be thorough but pragmatic. Minor style issues shouldn't block - focus on correctness and functionality.
+
+Do the review now.
