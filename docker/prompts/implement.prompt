@@ -1,18 +1,81 @@
-Implement the solution for this GitHub issue.
+You are in the implementation phase. Execute the approved plan and produce the code changes.
 
-## Issue Context
-{{ISSUE_CONTEXT}}
+## Purpose
+- Implement the solution described in plan.md.
+- This prompt may be executed multiple times across review cycles.
 
-{{REVIEW_FEEDBACK}}
+## Context Inputs
+- Issue details: {{ISSUE_CONTEXT}}
+- Plan: plan.md (always present)
+- Review feedback: {{REVIEW_FEEDBACK}} (present only for re-implementation)
+- Review cycle: {{REVIEW_CYCLE}}
 
-## Your Task
+## Implementation Protocol
 
-1. Look at the analysis in `/workspace/.analysis_result` if it exists
-2. Implement the changes needed to solve the issue
-3. Follow the existing code style and patterns
-4. Make minimal, focused changes - don't refactor unrelated code
-5. Ensure your changes are complete and working
+### First Implementation (Review Cycle = 1)
+- Follow plan.md exactly.
+- Do not add scope beyond the plan.
+- If plan.md is unclear or incomplete, stop and request clarification.
 
-If there's review feedback above, address those specific concerns.
+### Re-implementation (Review Cycle > 1)
+- Address all items in {{REVIEW_FEEDBACK}} explicitly.
+- Do not rework unrelated code.
+- Keep changes minimal and targeted to feedback.
+
+## Code Change Guidelines
+
+### DO
+- Make minimal, focused changes that satisfy the requirements.
+- Match existing patterns (APIs, file structure, naming, style).
+- Reuse existing utilities and components where possible.
+- Update or add tests only when necessary for correctness or existing patterns.
+- Keep changes cohesive and isolated to relevant files.
+- Validate types, error handling, and edge cases.
+
+### DON'T
+- Do not refactor unrelated code or introduce stylistic churn.
+- Do not rename files, folders, or public APIs unless required.
+- Do not introduce new dependencies unless explicitly required by the plan.
+- Do not change formatting or lint rules unless required.
+- Do not delete code that is not directly affected by the issue.
+- Do not invent new functionality beyond the plan.
+
+## Minimal Change Principle
+- Prefer the smallest change that fixes the issue.
+- Avoid touching code paths that do not need to change.
+- If a pattern exists, follow it exactly before introducing new structure.
+
+## Pattern Matching
+- Mirror existing patterns in the repository for:
+  - Data flow and state management
+  - Error handling and logging
+  - Testing structure and helpers
+  - File organization and naming
+
+## Output Requirements
+- Produce working, compilable code.
+- Keep changes focused and aligned with plan.md.
+- Ensure code adheres to repository conventions.
+
+## Verification Checklist (Complete Before Finishing)
+- [ ] All feedback items (if any) are addressed.
+- [ ] Changes align with plan.md and issue requirements.
+- [ ] Minimal change principle respected.
+- [ ] No unrelated refactors or formatting churn.
+- [ ] Tests updated or added if required by the change.
+- [ ] Code builds and runs with existing tooling.
+
+## Review Feedback Response (Only if {{REVIEW_FEEDBACK}} is present)
+Provide a structured response that maps feedback to changes:
+
+### Review Feedback Response
+- [ ] Feedback item 1: <summary of change>
+- [ ] Feedback item 2: <summary of change>
+- [ ] Feedback item 3: <summary of change>
+
+## Handoff Notes (for Testing Phase)
+- List any commands needed to validate changes.
+- Note any manual test steps or special setup.
+- Mention any known limitations or follow-ups.
 
 Implement the solution now.

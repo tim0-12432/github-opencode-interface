@@ -1,24 +1,87 @@
-You are analyzing a GitHub issue to understand what needs to be done.
+You are in the FOUNDATION (analysis) phase. Your goal is to understand the issue and produce a clear plan for all subsequent phases.
 
 ## Issue Context
 {{ISSUE_CONTEXT}}
 
-## Your Task
+## Repository Context
+- Repo: {{REPO}}
+- Issue Number: {{ISSUE_NUMBER}}
+- Resuming: {{RESUMING}}
 
-1. Read and understand the issue thoroughly
-2. Explore the codebase to understand the relevant parts
-3. Identify the files that need to be modified
-4. Create a brief implementation plan
+## Read-Only Constraints (MANDATORY)
+- ✅ DO: read files, search, and reason about behavior.
+- ✅ DO: outline a plan and identify scope boundaries.
+- ❌ DON'T: modify, create, or delete any files.
+- ❌ DON'T: run destructive commands or change repository state.
 
-Use the available tools to:
-- Search for relevant code (`rg`, `grep`)
-- Read files to understand the current implementation
-- Understand the project structure
+## Exploration Protocol (5 Steps)
+1) **Clarify the problem**
+   - Extract goals, constraints, and success criteria from the issue.
+   - List unknowns that require codebase inspection.
+2) **Map relevant areas**
+   - Identify modules, folders, and entry points likely involved.
+   - Note existing patterns to follow.
+3) **Inspect current behavior**
+   - Read key files to confirm current logic and data flow.
+   - Record exact file paths and relevant functions.
+4) **Define scope boundaries**
+   - What is in-scope vs. out-of-scope.
+   - Minimal change set that solves the issue.
+5) **Draft the plan**
+   - Produce a step-by-step plan with files to touch and rationale.
+   - Include risk/edge cases and validation steps.
 
-After analysis, create a file `/workspace/plan.md` with:
-- Summary of the issue
-- Files to modify
-- Approach to fix
-- Potential risks
+## Scope Boundaries
+- Stay within the feature area required by the issue.
+- Do not introduce unrelated refactors or stylistic changes.
+- Avoid expanding dependencies unless explicitly required.
+- Prefer existing patterns and utilities over new abstractions.
 
-Do NOT make any changes yet - this is analysis only.
+## Common Pitfalls (Avoid)
+- Misreading the issue or skipping acceptance criteria.
+- Ignoring existing architecture or conventions.
+- Planning changes without confirming current behavior.
+- Over-scoping the work or bundling unrelated fixes.
+- Forgetting error handling or edge cases mentioned in the issue.
+
+## Output: plan.md Template (EXACT SECTIONS)
+Create `/workspace/plan.md` with the following content and section order:
+
+# Summary
+- [ ] What the issue requires in one concise paragraph.
+
+# Context
+- [ ] Key repo areas examined and why.
+- [ ] Existing patterns/constraints that must be followed.
+
+# Files to Review
+- [ ] List exact file paths read during analysis.
+
+# Proposed Changes
+- [ ] Step-by-step plan (bulleted), each step tied to a file/component.
+
+# Risks & Edge Cases
+- [ ] Potential regressions and tricky scenarios to handle.
+
+# Validation Plan
+- [ ] How to confirm the fix (tests, manual checks, commands).
+
+# Out of Scope
+- [ ] Explicitly note what will NOT be changed.
+
+# Handoff Notes
+- [ ] Guidance for the next phase: key insights, dependencies, open questions.
+
+## DO / DON'T
+**DO**
+- Use checklists and structured lists.
+- Record exact file paths and functions observed.
+- Align strictly with the issue requirements.
+
+**DON'T**
+- Implement changes or write code.
+- Alter files or configs.
+- Make assumptions without verifying in the codebase.
+
+End your analysis by writing `/workspace/plan.md`. Then conclude with:
+**Begin the analysis now.**

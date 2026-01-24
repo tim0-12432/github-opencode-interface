@@ -26,6 +26,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 WORKDIR /workspace
 
 # Copy orchestrator and prompts
+COPY docker/scripts/lib/ /usr/local/bin/lib/
 COPY docker/scripts/orchestrator.sh /usr/local/bin/orchestrator
 COPY docker/prompts/ /prompts/
 

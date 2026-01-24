@@ -1,20 +1,79 @@
-The tests are failing. Your task is to fix the code so tests pass.
+The tests are failing and time is limited. Diagnose and fix them with a maximum of 5 iterations. Follow this process exactly and document your work.
 
-## Issue Context
-{{ISSUE_CONTEXT}}
+## Context
+- Issue: {{ISSUE_CONTEXT}}
+- Test Output: {{TEST_OUTPUT}}
+- Fix Attempt: {{FIX_ATTEMPT}}
 
-## Test Output (Failures)
-{{TEST_OUTPUT}}
+## Failure Diagnosis Protocol (Required)
+Follow these 4 steps on every attempt:
+1. Triage scope: identify all failing tests and group by failing module or feature.
+2. Categorize failures: map each failure to a category in the table below.
+3. Determine root cause: decide whether the defect is in code, test, environment, or data.
+4. Define fix plan: pick the smallest correct change that resolves the root cause without weakening tests.
 
-## Your Task
+### Failure Categorization Table
+| Category | Signals | Primary Action |
+|---|---|---|
+| Logic bug | Assertion mismatch, wrong return value | Fix implementation logic |
+| Contract mismatch | API shape, type mismatch, wrong expectations | Align implementation or update test expectations with spec |
+| Test flaw | Flaky, incorrect assumption, brittle mock | Fix test, keep coverage intent |
+| Environment/setup | Missing config, paths, clocks, locales | Fix setup, add stable fixtures |
+| Data/fixture | Incorrect fixture data or state leak | Fix fixtures, reset state |
+| Timing/async | Timeouts, race conditions | Stabilize async behavior |
 
-1. Analyze the test failures above
-2. Identify what's wrong - could be:
-   - Bug in the implementation
-   - Bug in the tests themselves
-   - Missing edge cases
-   - Wrong assumptions
-3. Fix the issues
-4. Do NOT remove tests just to make them pass - fix the actual problems
+## Fix Prioritization (When Multiple Failures)
+1. Fix shared root causes that explain multiple failures first.
+2. Fix deterministic failures before flaky ones.
+3. Prefer implementation fixes over test changes unless tests are clearly wrong.
+4. Avoid speculative changes; only change what evidence supports.
 
-Focus on making the tests pass while still correctly solving the issue.
+## Constraints
+- Never delete tests.
+- Do not skip or disable tests.
+- You may edit tests only to correct incorrect expectations, fix flakiness, or align with the documented spec.
+- Keep test intent intact; preserve or improve coverage.
+
+## Iteration Guidance
+### Attempts 1–2 (Fast, evidence-driven)
+- Prioritize direct fixes with the strongest evidence from stack traces and assertions.
+- Make minimal, localized changes.
+- Run tests and re-evaluate.
+
+### Attempts 3–5 (Escalation mode)
+- Re-examine assumptions and compare against requirements or spec.
+- Add targeted logs or debug assertions if needed.
+- Consider edge cases and state leakage.
+- If still failing, isolate the test by reproducing locally and reducing variables.
+
+## Escalation Strategy (Repeated Failures)
+If the same failure persists across attempts:
+- Re-read the failure output and re-categorize.
+- Verify the fix attempt did not introduce a new regression.
+- Consider whether the test itself is incorrect or incomplete.
+- If changes are risky, prefer a narrowly scoped fix with clear justification.
+
+## Output Requirements (Structured Fix Notes)
+Provide a concise, structured summary of your changes:
+- Diagnosis: what failed and why (category)
+- Fix: what changed and where
+- Verification: which tests now pass or what remains
+- Risks: any potential side effects
+
+## DO / DON’T
+**DO**
+- Use the failure categorization table.
+- Fix root causes and shared dependencies first.
+- Keep changes minimal and well-justified.
+
+**DON’T**
+- Delete, skip, or comment out tests.
+- Weaken assertions without a spec-backed reason.
+- Introduce unrelated refactors.
+
+## Handoff Notes (Review Phase)
+- Highlight any test changes and rationale.
+- Call out any assumptions made from the issue context.
+- List remaining failing tests (if any) with suspected root causes.
+
+Fix the issues now.

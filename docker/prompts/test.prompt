@@ -3,17 +3,130 @@ You are adding tests for the changes made to fix a GitHub issue.
 ## Issue Context
 {{ISSUE_CONTEXT}}
 
-## Your Task
+## Test Framework
+{{TEST_FRAMEWORK}}
 
-1. Review the changes that were made (use `git diff`)
-2. Identify what needs to be tested
-3. Add appropriate test cases
+## Purpose
+Add test coverage for the implementation. The tests must validate behavior introduced or changed by the issue fix.
 
-Guidelines:
-- Test the happy path
-- Test edge cases
-- Test error conditions
-- Follow existing test patterns
-- Use descriptive test names
+## Context You Must Use
+- Issue details from the context above
+- Implementation diff (review with `git diff`)
+- plan.md (follow the intended plan)
+- Test framework detection (use {{TEST_FRAMEWORK}})
+
+## Test Planning Protocol (4 Steps)
+- [ ] 1. **Understand scope**: Identify all behavior changes from the diff and plan.md.
+- [ ] 2. **Enumerate scenarios**: Happy path, edge cases, and error conditions for each change.
+- [ ] 3. **Map to tests**: Decide which files/tests to update or add, following existing patterns.
+- [ ] 4. **Verify coverage**: Ensure tests cover all new behavior and guard against regressions.
+
+## Naming Conventions (with examples)
+- Use descriptive, behavior-focused names.
+- Prefer "should ..." or "when ... then ...".
+
+Examples:
+- Jest/Vitest:
+  - `it('should render the empty state when no items exist', () => { ... })`
+  - `test('when request fails then shows error banner', async () => { ... })`
+- pytest:
+  - `def test_returns_empty_list_when_no_items(): ...`
+  - `def test_raises_value_error_on_invalid_input(): ...`
+- Go:
+  - `func TestService_Fetch_ReturnsEmptyWhenNoItems(t *testing.T) { ... }`
+  - `func TestParser_Parse_ReturnsErrorOnInvalidInput(t *testing.T) { ... }`
+
+## Test Structure Examples
+
+### Jest/Vitest
+```ts
+import { describe, it, expect } from 'vitest';
+
+describe('feature name', () => {
+  it('should handle the happy path', () => {
+    // arrange
+    // act
+    // assert
+  });
+
+  it('should handle edge cases', () => {
+    // arrange
+    // act
+    // assert
+  });
+});
+```
+
+### pytest
+```python
+def test_happy_path():
+    # arrange
+    # act
+    # assert
+
+
+def test_edge_case():
+    # arrange
+    # act
+    # assert
+```
+
+### Go
+```go
+func TestFeature_HappyPath(t *testing.T) {
+    t.Parallel()
+    // arrange
+    // act
+    // assert
+}
+
+func TestFeature_EdgeCase(t *testing.T) {
+    t.Parallel()
+    // arrange
+    // act
+    // assert
+}
+```
+
+## Scope & Coverage Requirements
+- Cover all new behavior and any changed logic paths.
+- Include tests for:
+  - [ ] Happy path
+  - [ ] Edge cases
+  - [ ] Error conditions
+- Use the existing test structure, fixtures, and helpers.
+- Avoid broad, unfocused tests; target the precise change scope.
+
+## Mocking Guidelines
+- Prefer real implementations unless the dependency is slow, flaky, or external.
+- Mock only at the boundary (network, filesystem, time, random, external services).
+- Keep mocks minimal and realistic; avoid mocking the unit under test.
+- In Go, prefer interface-based fakes or test doubles over heavy mocking.
+
+## DO / DON'T
+
+### DO
+- ✅ Follow existing test file patterns and naming.
+- ✅ Assert on observable behavior, not internal implementation.
+- ✅ Add new tests alongside existing ones when appropriate.
+- ✅ Keep tests deterministic and isolated.
+
+### DON'T
+- ❌ Don’t expand scope beyond the issue fix.
+- ❌ Don’t add snapshot tests unless already used.
+- ❌ Don’t over-mock or mock the code under test.
+- ❌ Don’t leave flaky or time-dependent tests.
+
+## Common Pitfalls (avoid these)
+- **Missing edge cases**: Ensure boundaries and null/empty inputs are covered.
+- **Testing implementation details**: Assert outputs and user-visible behavior instead.
+- **Improper async handling**: Await promises and use the correct async utilities.
+- **Shared state leakage**: Reset mocks/state between tests.
+- **Flaky timing assumptions**: Avoid real timers unless the framework is configured.
+
+## Handoff Notes for Fix-Tests Phase
+- If tests fail, identify the minimal code change or test correction needed.
+- Provide a short summary of failing tests and suspected cause.
+- Do not broaden scope; fix only what is necessary for stability.
 
 Add the tests now.
