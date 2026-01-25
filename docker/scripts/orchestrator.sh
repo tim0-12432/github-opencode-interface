@@ -42,6 +42,7 @@ source "${LIB_DIR}/suggestions.sh"
 source "${LIB_DIR}/setup.sh"
 source "${LIB_DIR}/workflows/resolve.sh"
 source "${LIB_DIR}/workflows/suggest.sh"
+source "${LIB_DIR}/workflows/review.sh"
 
 # ==========================================================================
 # Export Configuration

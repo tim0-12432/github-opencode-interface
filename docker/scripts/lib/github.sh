@@ -203,6 +203,10 @@ add_issue_comment() {
         log_warn "Dry run - skipping issue comment"
         return 0
     fi
+    if [[ -z "${ISSUE:-}" ]]; then
+        log_warn "ISSUE not set; skipping issue comment"
+        return 0
+    fi
     
     log "Adding comment to issue #${ISSUE}..."
     

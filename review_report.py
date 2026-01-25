@@ -1,12 +1,12 @@
 #!/usr/bin/env python3
 """
-GitHub Issue Resolver CLI
+GitHub Repo Review CLI
 
 Usage:
-    ./resolve.py owner/repo 123
-    ./resolve.py owner/repo 123 --dry-run
-    ./resolve.py owner/repo 123 --verbose
-    ./resolve.py owner/repo 123 --branch existing-branch
+    ./review_report.py owner/repo
+    ./review_report.py owner/repo --dry-run
+    ./review_report.py owner/repo --verbose
+    ./review_report.py owner/repo --branch existing-branch
 """
 
 import argparse
@@ -59,22 +59,20 @@ class Config:
         return {k: v for k, v in self.values.items() if v}
 
 
-class Resolver:
+class ReviewReporter:
     """Main resolver class."""
     
     def __init__(
         self,
         repo: str,
-        issue: int,
         config: Config,
         branch: Optional[str] = None,
         dry_run: bool = False,
         verbose: bool = False,
     ):
         self.repo = repo
-        self.issue = issue
         self.config = config
-        self.branch = branch or f"fix/issue-{issue}"
+        self.branch = branch or "review-report"
         self.dry_run = dry_run
         self.verbose = verbose
         
@@ -112,23 +110,21 @@ class Resolver:
     
     def _build_env_vars(self) -> dict[str, str]:
         """Build environment variables for the container."""
-        #env = self.config.get_env_dict()
+        # env = self.config.get_env_dict()
 
         # Add runtime values
         env = {
-            'WORKFLOW_MODE': 'resolve',
+            'WORKFLOW_MODE': 'review',
             'REPO': self.repo,
-            'ISSUE': str(self.issue),
             'BRANCH': self.branch,
             'DRY_RUN': str(self.dry_run).lower(),
             'VERBOSE': str(self.verbose).lower(),
-            'SUGGESTED_ISSUES_COUNT': self.config.get('SUGGESTED_ISSUES_COUNT', '3'),
         }
         
         return env
     
     def run(self) -> int:
-        """Run the resolver."""
+        """Run the reporter."""
         
         # Validate
         if not self._check_docker():
@@ -164,7 +160,7 @@ class Resolver:
         # Print startup info
         print()
         print("=" * 60)
-        print(f"  Resolving: {self.repo}#{self.issue}")
+        print(f"  Reviewing: {self.repo}")
         print(f"  Branch:    {self.branch}")
         print(f"  Dry run:   {self.dry_run}")
         print("=" * 60)
@@ -177,8 +173,8 @@ class Resolver:
         if result.returncode != 0:
             print()
             print("-" * 60)
-            print("  To continue working on this issue, run:")
-            print(f"  ./resolve.py {self.repo} {self.issue}")
+            print("  To continue working on this review, run:")
+            print(f"  ./review_report.py {self.repo}")
             print("-" * 60)
             print()
         
@@ -195,15 +191,15 @@ def parse_repo(repo_str: str) -> Optional[str]:
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description='Automatically resolve GitHub issues using AI',
+        description='Automatically create a review report using AI',
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog='''
 Examples:
-  %(prog)s owner/repo 123
-  %(prog)s owner/repo 123 --dry-run
-  %(prog)s owner/repo 123 --verbose
-  %(prog)s owner/repo 123 --branch fix/my-custom-branch
-  %(prog)s owner/repo 123 --config /path/to/config.env
+  %(prog)s owner/repo
+  %(prog)s owner/repo --dry-run
+  %(prog)s owner/repo --verbose
+  %(prog)s owner/repo --branch fix/my-custom-branch
+  %(prog)s owner/repo --config /path/to/config.env
         ''',
     )
     
@@ -212,13 +208,8 @@ Examples:
         help='Repository in owner/repo format',
     )
     parser.add_argument(
-        'issue',
-        type=int,
-        help='Issue number',
-    )
-    parser.add_argument(
         '--branch', '-b',
-        help='Branch name (default: fix/issue-<number>)',
+        help='Branch name (default: fix/review-report)',
     )
     parser.add_argument(
         '--dry-run', '-n',
@@ -250,9 +241,8 @@ Examples:
     config = Config(args.config)
 
     # Create and run resolver
-    resolver = Resolver(
+    resolver = ReviewReporter(
         repo=repo,
-        issue=args.issue,
         config=config,
         branch=args.branch,
         dry_run=args.dry_run,

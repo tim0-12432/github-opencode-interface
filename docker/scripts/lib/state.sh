@@ -38,3 +38,16 @@ save_review_feedback() {
 get_review_feedback() {
     load_state "last_review_feedback" ""
 }
+
+get_review_report() {
+    local file_name="${1}_review_report"
+    load_state "$file_name" "No review report available"
+}
+
+cleanup_state() {
+    for file in "${STATE_DIR}"/*.*; do
+        local basename=$(basename "$file" | cut -d. -f1)
+        mv -- "$file" "${STATE_DIR}/${basename}"
+    done
+    verbose "Cleaned up state files"
+}

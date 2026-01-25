@@ -18,6 +18,8 @@ _validate_prerequisites() {
     if [[ -z "${ISSUE:-}" ]]; then
         if [[ "${WORKFLOW_MODE:-}" == "suggest" ]] || [[ "${SUGGEST_ONLY:-false}" == "true" ]]; then
             verbose "ISSUE not set; continuing for suggest workflow"
+        elif [[ "${WORKFLOW_MODE:-}" == "review" ]]; then
+            verbose "ISSUE not set; continuing for review workflow"
         else
             log_error "ISSUE is not set; cannot render prompt"
             errors=$((errors + 1))

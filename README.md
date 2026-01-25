@@ -2,6 +2,7 @@
 
 - **Resolver**: Automatically resolve GitHub issues using AI (OpenCode + LLM).
 - **Suggestor**: Automatically create follow-up issues on GitHub using AI.
+- **Reviewer**: Create a report for a GitHub repo based on the opinion of 6 different AI reviewers.
 
 ## Quick Start
 
@@ -113,5 +114,76 @@ cp /.local/share/opencode/auth.json auth.json
 │                                  ▼                                   │
 │                               [ END ]                                │
 │                     output: created issue URLs                       │
+└──────────────────────────────────────────────────────────────────────┘
+```
+
+### Review Reporter
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                              START                                   │
+│                                │                                     │
+│                           [ SETUP ]                                  │
+│                    validate + clone + context                        │
+│                                │                                     │
+│                 ┌──────────────┴──────────────┐                      │
+│                 │   Branch exists remote?     │                      │
+│                 └──────────────┬──────────────┘                      │
+│                      YES       │        NO                           │
+│                       │        │        │                            │
+│                   checkout  create branch                            │
+│                       │        │        │                            │
+│                       └────────┴────────┘                            │
+│                                │                                     │
+│                        [ SECURITY-REPORT ]                           │
+│                                │                                     │
+│                          ┌─────┴─────┐                               │
+│                        PASS        FAIL ──────────► [ ERROR ]        │
+│                          │                            exit 1         │
+│                          │                                           │
+│                     [ ARCHITECTURE-REPORT ]                          │
+│                          │                                           │
+│                    ┌─────┴─────┐                                     │
+│                  PASS        FAIL ──────────► [ ERROR ]              │
+│                    │                            exit 1               │
+│                    │                                                 │
+│                  [ CUSTOMER-REPORT ]                                 │
+│                    │                                                 │
+│              ┌─────┴─────┐                                           │
+│            PASS        FAIL ──────────► [ ERROR ]                    │
+│              │                            exit 1                     │
+│              │                                                       │
+│            [ ENGINEERING-REPORT ]                                    │
+│              │                                                       │
+│        ┌─────┴─────┐                                                 │
+│      PASS        FAIL ──────────► [ ERROR ]                          │
+│        │                            exit 1                           │
+│        │                                                             │
+│      [ TESTING-REPORT ]                                              │
+│        │                                                             │
+│  ┌─────┴─────┐                                                       │
+│ PASS       FAIL ──────────► [ ERROR ]                                │
+│  │                            exit 1                                 │
+│  │                                                                   │
+│ [ RESOURCE-REPORT ]                                                  │
+│  │                                                                   │
+│  │                                                                   │
+│ ┌┴────┐                                                              │
+│ PASS FAIL ──────────► [ ERROR ]                                      │
+│  │                      exit 1                                       │
+│  │                                                                   │
+│ [ AGGREGATION ]                                                      │
+│ combine 6 reports                                                    │
+│  │                                                                   │
+│  │                                                                   │
+│ ┌┴────┐                                                              │
+│ PASS FAIL ──────────► [ ERROR ]                                      │
+│  │                      exit 1                                       │
+│  │                                                                   │
+│ [ FINALIZATION ]                                                     │
+│ commit + push + PR                                                   │
+│  │                                                                   │
+│ [ SUCCESS ]                                                          │
+│  output: PR URL + report                                             │
 └──────────────────────────────────────────────────────────────────────┘
 ```

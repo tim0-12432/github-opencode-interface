@@ -21,11 +21,11 @@ validate_workflow_mode() {
     local mode="$1"
 
     case "$mode" in
-        resolve|suggest)
+        resolve|suggest|review)
             return 0
             ;;
         *)
-            log_error "Invalid WORKFLOW_MODE: ${mode}. Use 'resolve' or 'suggest'."
+            log_error "Invalid WORKFLOW_MODE: ${mode}. Use 'resolve', 'suggest', or 'review'."
             return 1
             ;;
     esac
@@ -90,6 +90,15 @@ setup_resolve() {
     [[ -d "/opencode-config" ]] && cp -r /opencode-config/. "$WORK_DIR/" 2>/dev/null || true
 }
 
+setup_review() {
+    validate_suggest_inputs
+    setup_common
+    clone_or_continue_repo
+    create_review_context
+
+    [[ -d "/opencode-config" ]] && cp -r /opencode-config/. "$WORK_DIR/" 2>/dev/null || true
+}
+
 clone_repo_for_suggest() {
     log "Cloning repository ${REPO}..."
 
@@ -126,6 +135,20 @@ EOF
     fi
 }
 
+create_review_context() {
+    cat > /workspace/issue_context.md <<EOF
+# Repository: ${REPO}
+
+No source issue was provided. Generate review report based on the current repository state.
+EOF
+
+    if [[ ! -s "/workspace/issue_context.md" ]]; then
+        log_error "Failed to create issue context file or file is empty: /workspace/issue_context.md"
+        log_error "Ensure the container can write to /workspace."
+        return 1
+    fi
+}
+
 setup_suggest() {
     validate_suggest_inputs
     setup_common
@@ -152,7 +175,9 @@ print_banner() {
     echo ""
     echo "╔════════════════════════════════════════════════════════════╗"
     if [[ "$mode" == "suggest" ]]; then
-        echo "║                 GitHub Issue Suggester                    ║"
+        echo "║                 GitHub Issue Suggester                     ║"
+    elif [[ "$mode" == "review" ]]; then
+        echo "║                 GitHub Reviewer Reporter                   ║"
     else
         echo "║           GitHub Issue Resolver                            ║"
     fi
@@ -188,6 +213,9 @@ workflow_dispatch() {
             ;;
         suggest)
             run_workflow_suggest
+            ;;
+        review)
+            run_workflow_review
             ;;
     esac
 }

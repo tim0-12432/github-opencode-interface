@@ -109,7 +109,7 @@ class SuggestIssues:
                 'docker',
                 'build',
                 '-t',
-                'issue-resolver',
+                'github-opencode-interface',
                 '-f',
                 str(os.path.join(self.script_dir, 'docker', 'Dockerfile')),
                 '.',
@@ -121,17 +121,15 @@ class SuggestIssues:
 
     def _build_env_vars(self) -> dict[str, str]:
         """Build environment variables for the container."""
-        env = self.config.get_env_dict()
+        # env = self.config.get_env_dict()
 
-        env.update(
-            {
-                'WORKFLOW_MODE': 'suggest',
-                'REPO': self.repo,
-                'SUGGESTED_ISSUES_COUNT': str(self.count),
-                'DRY_RUN': str(self.dry_run).lower(),
-                'VERBOSE': str(self.verbose).lower(),
-            },
-        )
+        env = {
+            'WORKFLOW_MODE': 'suggest',
+            'REPO': self.repo,
+            'SUGGESTED_ISSUES_COUNT': str(self.count),
+            'DRY_RUN': str(self.dry_run).lower(),
+            'VERBOSE': str(self.verbose).lower(),
+        }
 
         if self.source_issue is not None:
             env['ISSUE'] = str(self.source_issue)
@@ -160,7 +158,7 @@ class SuggestIssues:
             cmd.extend(['-e', f'{key}={value}'])
 
         cmd.extend(['--env-file', str(os.path.join(self.script_dir, 'config.env'))])
-        cmd.append('issue-resolver')
+        cmd.append('github-opencode-interface')
 
         self._log_verbose(f"Running: {' '.join(cmd)}")
 
