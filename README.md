@@ -21,7 +21,9 @@ cp /.local/share/opencode/auth.json auth.json
 ./resolve.py owner/repo 123
 ```
 
-## Workflow Diagram
+## Workflow Diagrams
+
+### Resolver
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
@@ -71,4 +73,45 @@ cp /.local/share/opencode/auth.json auth.json
 │         [ SUCCESS ]                                             │
 │         commit+PR+comment                                       │
 └─────────────────────────────────────────────────────────────────┘
+```
+
+### Suggestor
+
+```
+┌──────────────────────────────────────────────────────────────────────┐
+│                              [ START ]                               │
+│                                  │                                   │
+│                                  ▼                                   │
+│                        [ SUGGEST-ISSUES ]                            │
+│              generates up to N suggestions                           │
+│                 outputs suggested_issues.json                        │
+│                                  │                                   │
+│                                  ▼                                   │
+│               ┌───────────────────────────────────┐                  │
+│               │     FOR EACH SUGGESTION (ARRAY)   │                  │
+│               └───────────────────────────────────┘                  │
+│                                  │                                   │
+│                                  ▼                                   │
+│                         [ REFINE-ISSUE ]                             │
+│           validate, check duplicates (gh), refine content            │
+│                                  │                                   │
+│                                  ▼                                   │
+│                         ┌───────────────┐                            │
+│                         │ create == ?   │                            │
+│                         └──────┬────────┘                            │
+│                            false│true                                │
+│                                 │                                    │
+│     ┌──────────────────────┐    │   ┌──────────────────────────────┐ │
+│     │        SKIP          │    │   │      gh issue create         │ │
+│     │     (log reason)     │    │   └──────────────────────────────┘ │
+│     └──────────────────────┘    │                                    │
+│              │                  │                                    │
+│              └──────────┬───────┘                                    │
+│                         ▼                                            │
+│                    (next item)                                       │
+│                                  │                                   │
+│                                  ▼                                   │
+│                               [ END ]                                │
+│                     output: created issue URLs                       │
+└──────────────────────────────────────────────────────────────────────┘
 ```

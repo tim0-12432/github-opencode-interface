@@ -38,6 +38,5 @@ $(get_review_feedback)"
     fi
 
     finalize_success "true"
-    suggest_issues_phase
     finalize_success_report
 }

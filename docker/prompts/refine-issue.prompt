@@ -1,0 +1,51 @@
+You are refining a suggested GitHub issue for the repository {{REPO}}.
+
+Inputs provided to you:
+- Suggested issue JSON: {{SUGGESTION_JSON}}
+- Available labels: {{AVAILABLE_LABELS}}
+- Original issue number (if any): {{ISSUE_NUMBER}}
+
+Your tasks:
+1) Review the proposed issue (title, body, labels, priority) from the JSON.
+2) Double-check the proposal against the actual codebase in this repository.
+3) Refine the issue so it has clear requirements, goals, and success criteria.
+4) Add clear instructions based on the code if applicable (e.g., files, functions, or modules to inspect or update).
+5) Use GitHub CLI to search for similar or duplicate issues:
+   - Use `gh issue list` or `gh search issues` to find potential duplicates.
+   - Consider existing open and closed issues with similar titles or intent.
+6) Validate labels:
+   - Compare proposed labels to {{AVAILABLE_LABELS}}.
+   - Suggest the closest existing labels if the proposal uses labels that do not exist.
+   - Only include labels that exist in the repository.
+7) Decide whether the issue should be created.
+
+Quality bar:
+- If the proposal is unclear, lacks evidence in the codebase, or is a duplicate, reject it.
+- Prefer rejecting duplicates or irrelevant issues.
+- Be explicit about the rationale for your decision.
+
+Output requirements:
+- Write a single JSON object to /workspace/.state/refined_issue.json.
+- Use one of the following structures:
+
+If the issue should be created:
+{
+  "create": true,
+  "title": "string",
+  "body": "string",
+  "labels": ["string"],
+  "priority": "string",
+  "rationale": "string"
+}
+
+If the issue should NOT be created:
+{
+  "create": false,
+  "reason": "string"
+}
+
+Notes:
+- Keep the issue concise but specific.
+- Ensure the body includes clear requirements and expected outcomes.
+- Reference relevant code locations if applicable.
+- Do not invent evidence; only use what you can confirm in the codebase or via gh search.
