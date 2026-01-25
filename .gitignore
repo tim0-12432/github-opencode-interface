@@ -21,3 +21,6 @@ Thumbs.db
 
 # Build artifacts
 *.log
+
+# Node modules
+node_modules
