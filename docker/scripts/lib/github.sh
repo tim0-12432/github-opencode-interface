@@ -24,7 +24,11 @@ fetch_issue() {
     log "Fetching issue #${ISSUE} from ${REPO}..."
     
     local issue_json
-    issue_json=$(gh issue view "$ISSUE" --repo "$REPO" --json title,body,labels,comments)
+    if ! issue_json=$(gh issue view "$ISSUE" --repo "$REPO" --json title,body,labels,comments 2>&1); then
+        log_error "Failed to fetch issue #${ISSUE} from ${REPO}. Check your GITHUB_TOKEN, repo permissions, or issue number."
+        log_error "gh output: ${issue_json}"
+        return 1
+    fi
     
     ISSUE_TITLE=$(echo "$issue_json" | jq -r '.title')
     ISSUE_BODY=$(echo "$issue_json" | jq -r '.body // "No description provided."')
@@ -44,6 +48,12 @@ ${ISSUE_BODY}
 ${ISSUE_COMMENTS:-No comments}
 EOF
 
+    if [[ ! -s "/workspace/issue_context.md" ]]; then
+        log_error "Failed to create issue context file or file is empty: /workspace/issue_context.md"
+        log_error "Re-run with a valid ISSUE and ensure the container can write to /workspace."
+        return 1
+    fi
+    
     log_success "Issue fetched: ${ISSUE_TITLE}"
 }
 
@@ -68,7 +78,17 @@ clone_or_continue_repo() {
     
     [[ -d "$WORK_DIR" ]] && rm -rf "$WORK_DIR"
     
-    git clone --depth 100 "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" "$WORK_DIR" 2>/dev/null
+    if ! git clone --depth 100 "https://x-access-token:${GITHUB_TOKEN}@github.com/${REPO}.git" "$WORK_DIR" 2>&1; then
+        log_error "Failed to clone repository ${REPO}. Check your GITHUB_TOKEN and repository access."
+        log_error "Tip: verify the repo exists and the token has read access."
+        return 1
+    fi
+
+    if [[ ! -d "${WORK_DIR}/.git" ]]; then
+        log_error "Repository clone succeeded but .git directory not found: ${WORK_DIR}"
+        log_error "Tip: ensure WORK_DIR is writable and not overridden by a volume." 
+        return 1
+    fi
     
     cd "$WORK_DIR"
     git config user.email "${GIT_AUTHOR_EMAIL:-bot@issue-resolver.local}"
@@ -190,6 +210,13 @@ add_issue_comment() {
     
     case "$status" in
         success)
+            local suggestions_block=""
+            if [[ -n "${SUGGESTED_ISSUE_URLS:-}" ]]; then
+                suggestions_block="
+
+### Suggested Follow-up Issues
+$(echo "${SUGGESTED_ISSUE_URLS}" | sed 's/^/- /')"
+            fi
             comment_body="## 🤖 Automated Fix Ready
 
 A pull request has been created to resolve this issue.
@@ -201,6 +228,7 @@ A pull request has been created to resolve this issue.
 - ✅ Implementation complete
 - ✅ Tests passing
 - ✅ Review passed
+${suggestions_block}
 
 Please review the PR and merge if satisfactory."
             ;;

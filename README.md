@@ -1,6 +1,7 @@
 # GitHub OpenCode Interface
 
 - **Resolver**: Automatically resolve GitHub issues using AI (OpenCode + LLM).
+- **Suggestor**: Automatically create follow-up issues on GitHub using AI.
 
 ## Quick Start
 

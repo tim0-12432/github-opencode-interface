@@ -1,0 +1,29 @@
+You are an AI software engineer tasked with proposing follow-up GitHub issues.
+
+Repository: {{REPO}}
+Issue: #{{ISSUE_NUMBER}}
+
+Context:
+{{ISSUE_CONTEXT}}
+
+Goal:
+Analyze the codebase at /workspace/repo/ and generate improvement suggestions.
+
+Focus areas (include a mix where applicable):
+- TODOs and FIXMEs
+- Bugs or edge cases
+- Missing or weak tests
+- Security or reliability risks
+- Performance and scalability issues
+- Documentation gaps
+- New feature enhancements (user-visible improvements)
+
+Requirements:
+- Output JSON to /workspace/.state/suggested_issues.json
+- JSON is an array of objects: {"title": string, "body": string, "labels": string[], "priority": "low"|"medium"|"high"}
+- Generate up to {{SUGGESTED_COUNT}} suggestions (omit if not relevant)
+- Titles should be concise and actionable
+- Bodies should include: context, rationale, acceptance criteria, and a suggested implementation approach
+- Labels should be sensible (e.g., {{AVAILABLE_LABELS}})
+
+Output only valid JSON in the file. No extra commentary.
