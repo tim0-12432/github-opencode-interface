@@ -98,8 +98,8 @@ clone_or_continue_repo() {
     
     if check_existing_branch; then
         log "Continuing on existing branch: ${branch_name}"
-        git fetch origin "$branch_name"
-        git checkout -b "$branch_name" "origin/$branch_name"
+        git fetch origin "$branch_name":"$branch_name"
+        git checkout "$branch_name"
         WORKING_BRANCH="$branch_name"
         RESUMING=true
         log_success "Checked out existing branch with $(git log --oneline origin/${DEFAULT_BRANCH}..HEAD | wc -l) commit(s) ahead"
