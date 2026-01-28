@@ -8,8 +8,8 @@
 
 ```bash
 # 1. Clone
-git clone https://github.com/yourorg/github-issue-resolver.git
-cd github-issue-resolver
+git clone https://github.com/tim0-12432/github-opencode-interface.git
+cd github-opencode-interface
 
 # 2. Configure
 cp config.env.example config.env
