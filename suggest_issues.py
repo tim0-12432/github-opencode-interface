@@ -198,14 +198,13 @@ class SuggestIssues:
 
         github_token = self.config.get('GITHUB_TOKEN')
         github_client_id = self.config.get('GITHUB_CLIENT_ID')
-        github_client_secret = self.config.get('GITHUB_CLIENT_SECRET')
         github_private_key = self.config.get('GITHUB_PRIVATE_KEY')
 
         token_auth_set = bool(github_token)
-        app_auth_set = bool(github_client_id and github_client_secret and github_private_key)
+        app_auth_set = bool(github_client_id and github_private_key)
 
         if not (token_auth_set or app_auth_set):
-            self._log("Error: Either GITHUB_TOKEN or all of GITHUB_CLIENT_ID, GITHUB_CLIENT_SECRET, and GITHUB_PRIVATE_KEY must be set in config.env")
+            self._log("Error: Either GITHUB_TOKEN or all of GITHUB_CLIENT_ID, and GITHUB_PRIVATE_KEY must be set in config.env")
             return 1
 
         if not self._build_docker_image():
