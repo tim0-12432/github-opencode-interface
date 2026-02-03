@@ -7,6 +7,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     jq \
     git \
     ca-certificates \
+    golang-go \
+    python3 \
     && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode

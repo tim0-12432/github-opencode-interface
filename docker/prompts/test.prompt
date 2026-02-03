@@ -113,9 +113,9 @@ func TestFeature_EdgeCase(t *testing.T) {
 
 ### DON'T
 - ❌ Don’t expand scope beyond the issue fix.
-- ❌ Don’t add snapshot tests unless already used.
 - ❌ Don’t over-mock or mock the code under test.
 - ❌ Don’t leave flaky or time-dependent tests.
+- ❌ Don’t test minor visual details like certain tags or classes.
 
 ## Common Pitfalls (avoid these)
 - **Missing edge cases**: Ensure boundaries and null/empty inputs are covered.

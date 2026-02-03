@@ -21,6 +21,8 @@ import requests
 from pathlib import Path
 from typing import Optional
 
+import docker_cache
+
 def get_auth_token(
     repo: str,
     client_id: str,
@@ -123,6 +125,7 @@ class Resolver:
         branch: Optional[str] = None,
         dry_run: bool = False,
         verbose: bool = False,
+        force_build: bool = False,
     ):
         self.repo = repo
         self.issue = issue
@@ -130,6 +133,7 @@ class Resolver:
         self.branch = branch or f"fix/issue-{issue}"
         self.dry_run = dry_run
         self.verbose = verbose
+        self.force_build = force_build
         
         self.script_dir = Path(__file__).parent.resolve()
     
@@ -154,14 +158,25 @@ class Resolver:
     
     def _build_docker_image(self) -> bool:
         """Build the Docker image if needed."""
-        self._log("Building Docker image...")
-        
-        result = subprocess.run(
-            ['docker', 'build', '-t', 'github-opencode-interface', '-f', str(os.path.join(self.script_dir, 'docker', 'Dockerfile')), '.'],
-            capture_output=not self.verbose,
+        dockerfile_path = str(os.path.join(self.script_dir, 'docker', 'Dockerfile'))
+        image_name = 'github-opencode-interface'
+        should_rebuild, content_hash = docker_cache.should_rebuild_image(
+            repo_root=str(self.script_dir),
+            image_name=image_name,
+            force_build=self.force_build,
         )
-        
-        return result.returncode == 0
+
+        if not should_rebuild:
+            self._log(f"Docker cache hit (hash={content_hash}). Using existing image.")
+            return True
+
+        self._log(f"Docker cache miss (hash={content_hash}). Building image...")
+        return docker_cache.build_docker_image(
+            dockerfile_path=dockerfile_path,
+            image_name=image_name,
+            content_hash=content_hash,
+            verbose=self.verbose,
+        )
     
     def _build_env_vars(self) -> dict[str, str]:
         """Build environment variables for the container."""
@@ -210,12 +225,16 @@ class Resolver:
         # Prepare environment
         env_vars = self._build_env_vars()
         if app_auth_set:
-            env_vars['GITHUB_TOKEN'] = get_auth_token(
+            token = get_auth_token(
                 self.repo,
                 github_client_id,
                 github_private_key,
             )
-        if not env_vars['GITHUB_TOKEN']:
+            if not token:
+                self._log("Error: Failed to obtain GitHub authentication token")
+                return 1
+            env_vars['GITHUB_TOKEN'] = token
+        if not env_vars.get('GITHUB_TOKEN'):
             self._log("Error: Failed to obtain GitHub authentication token")
             return 1
 
@@ -304,6 +323,11 @@ Examples:
         default=Path(__file__).parent / 'config.env',
         help='Path to config file (default: config.env)',
     )
+    parser.add_argument(
+        '--force-build',
+        action='store_true',
+        help='Force rebuilding the Docker image',
+    )
     
     args = parser.parse_args()
     
@@ -325,6 +349,7 @@ Examples:
         branch=args.branch,
         dry_run=args.dry_run,
         verbose=args.verbose,
+        force_build=args.force_build,
     )
     
     return resolver.run()

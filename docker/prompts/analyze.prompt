@@ -30,6 +30,9 @@ You are in the FOUNDATION (analysis) phase. Your goal is to understand the issue
 5) **Draft the plan**
    - Produce a step-by-step plan with files to touch and rationale.
    - Include risk/edge cases and validation steps.
+6) **Note required setup**
+   - For testing we need to have all tests executed.
+   - Note down for the implementation which commands need to be executed in order to make the tests runnable.
 
 ## Scope Boundaries
 - Stay within the feature area required by the issue.
