@@ -148,7 +148,10 @@ push_branch() {
     log "Pushing branch to remote..."
     
     cd "$WORK_DIR"
-    git push -u origin "$WORKING_BRANCH" 2>/dev/null
+    if ! git push -u origin "$WORKING_BRANCH"; then
+        log_error "Failed to push branch to remote"
+        return 1
+    fi
     
     log_success "Branch pushed: ${WORKING_BRANCH}"
 }
