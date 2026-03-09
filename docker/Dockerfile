@@ -11,6 +11,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     python3 \
     && rm -rf /var/lib/apt/lists/*
 
+# Install Python dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    python3-pip \
+    && rm -rf /var/lib/apt/lists/* \
+    && pip3 install --no-cache-dir PyGithub rich
+
 # Install OpenCode
 RUN curl -fsSL https://opencode.ai/install | bash
 
@@ -27,15 +33,16 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 # Set up workspace
 WORKDIR /workspace
 
-# Copy orchestrator and prompts
-COPY docker/scripts/lib/ /usr/local/bin/lib/
-COPY docker/scripts/orchestrator.sh /usr/local/bin/orchestrator
+# Copy Python orchestrator and library
+COPY docker/scripts/ /usr/local/lib/python3.11/site-packages/github_opencode_interface/
 COPY docker/prompts/ /prompts/
+
+# Create orchestrator entry point
+RUN echo '#!/bin/bash\npython3 -m github_opencode_interface.orchestrator "$@"' > /usr/local/bin/orchestrator \
+    && chmod +x /usr/local/bin/orchestrator
 
 # Copy opencode config directory
 COPY docker/opencode/ /root/.config/opencode/
 COPY auth.json /root/.local/share/opencode/auth.json
-
-RUN chmod +x /usr/local/bin/orchestrator
 
 ENTRYPOINT ["/usr/local/bin/orchestrator"]

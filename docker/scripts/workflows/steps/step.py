@@ -1,23 +1,94 @@
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
+from enum import Enum
+import time
+
+from ...lib.context import WorkflowContext
+from ...lib.exceptions import StepRetryExhaustedError
+
+
+class StepStatus(Enum):
+    '''Lifecycle status for a workflow step.'''
+
+    PENDING = 'PENDING'
+    RUNNING = 'RUNNING'
+    SUCCESS = 'SUCCESS'
+    FAILED = 'FAILED'
+    SKIPPED = 'SKIPPED'
+
 
 class AbstractStep(ABC):
-    def __init__(self, name: str, retries: int = 0):
+    '''Base class for workflow steps with retry support.
+
+    Args:
+        name: Human-readable name of the step.
+        retries: Number of retries before giving up.
+        retry_delay: Delay in seconds between retries.
+    '''
+
+    def __init__(self, name: str, retries: int = 0, retry_delay: float = 2.0) -> None:
         self.name = name
         self.retries = retries
+        self.retry_delay = retry_delay
+        self.status = StepStatus.PENDING
 
-    def execute(self, env: dict={}):
-        print(f"Executing step: {self.name} with {self.retries} retries")
-        retries = 0
-        while retries <= self.retries:
+    def execute(self, ctx: WorkflowContext) -> None:
+        '''Execute the step with retries.
+
+        Args:
+            ctx: Workflow execution context.
+
+        Raises:
+            StepRetryExhaustedError: When all retries are exhausted.
+        '''
+        if self.should_skip(ctx):
+            self.status = StepStatus.SKIPPED
+            ctx.logger.warn(f"Skipping step '{self.name}'.")
+            return
+
+        ctx.logger.log(f"Executing step: {self.name} with {self.retries} retries")
+        attempt = 0
+        self.status = StepStatus.RUNNING
+        while attempt <= self.retries:
             try:
-                self.run(env)
-                break
-            except Exception as e:
-                print(f"Error executing step '{self.name}': {e}")
-                retries += 1
-                if retries > self.retries:
-                    print(f"Step '{self.name}' failed after {self.retries} retries.")
+                self.run(ctx)
+                self.status = StepStatus.SUCCESS
+                ctx.logger.success(f"Step '{self.name}' completed successfully.")
+                return
+            except Exception as error:
+                attempt += 1
+                if attempt > self.retries:
+                    self.status = StepStatus.FAILED
+                    ctx.logger.error(
+                        f"Step '{self.name}' failed after {self.retries} retries.",
+                    )
+                    raise StepRetryExhaustedError(
+                        f"Step '{self.name}' failed after {self.retries} retries.",
+                    ) from error
+                ctx.logger.warn(
+                    f"Error executing step '{self.name}': {error}. "
+                    f"Retrying ({attempt}/{self.retries})...",
+                )
+                if self.retry_delay > 0:
+                    time.sleep(self.retry_delay)
+
+    def should_skip(self, ctx: WorkflowContext) -> bool:
+        '''Determine whether the step should be skipped.
+
+        Args:
+            ctx: Workflow execution context.
+
+        Returns:
+            True when the step should be skipped; otherwise False.
+        '''
+        return False
 
     @abstractmethod
-    def run(self, env: dict):
-        raise NotImplementedError("Subclasses must implement the run method.")
+    def run(self, ctx: WorkflowContext) -> None:
+        '''Run the step logic.
+
+        Args:
+            ctx: Workflow execution context.
+        '''
+        raise NotImplementedError('Subclasses must implement the run method.')
