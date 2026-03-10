@@ -8,6 +8,9 @@ from typing import Optional
 from .exceptions import GitError
 
 
+_UNSET: object = object()
+
+
 class GitService:
     """Provides git operations scoped to a working directory."""
 
@@ -29,8 +32,11 @@ class GitService:
             email: Git user email.
         """
         try:
-            self._run('git', 'config', '--global', 'user.email', email)
-            self._run('git', 'config', '--global', 'user.name', name)
+            # Use cwd=None: --global config writes to ~/.gitconfig and does not
+            # require a specific working directory. This also ensures the method
+            # works before the repository has been cloned.
+            self._run('git', 'config', '--global', 'user.email', email, cwd=None)
+            self._run('git', 'config', '--global', 'user.name', name, cwd=None)
         except subprocess.CalledProcessError as exc:
             raise GitError(f'Failed to configure git identity: {exc.stdout}') from exc
 
@@ -176,21 +182,29 @@ class GitService:
         self,
         *args: str,
         check: bool = True,
-        cwd: Optional[Path] = None,
+        cwd: 'Optional[Path]' = _UNSET,  # type: ignore[assignment]
     ) -> subprocess.CompletedProcess[str]:
         """Run a git command in the working directory.
 
         Args:
             *args: Command arguments.
             check: Whether to raise on non-zero exit codes.
-            cwd: Optional override for the working directory.
+            cwd: Optional override for the working directory. Pass ``None`` to
+                 run without a specific working directory (inherits the current
+                 process cwd). When omitted the service's ``work_dir`` is used.
 
         Returns:
             CompletedProcess result.
         """
+        if cwd is _UNSET:
+            effective_cwd: Optional[str] = str(self.work_dir)
+        elif cwd is None:
+            effective_cwd = None
+        else:
+            effective_cwd = str(cwd)
         return subprocess.run(
             list(args),
-            cwd=str(cwd or self.work_dir),
+            cwd=effective_cwd,
             capture_output=True,
             text=True,
             check=check,

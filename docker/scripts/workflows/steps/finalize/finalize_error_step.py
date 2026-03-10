@@ -25,7 +25,7 @@ class FinalizeErrorStep(AbstractStep):
             self._print_banner(ctx)
             return
 
-        if ctx.git_service and ctx.git_service.has_changes():
+        if ctx.git_service and ctx.git_service.work_dir.exists() and ctx.git_service.has_changes():
             try:
                 CommitStep(
                     message=(
