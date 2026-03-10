@@ -12,8 +12,11 @@ HASH_LABEL = 'com.github-opencode-interface.content-hash'
 
 _HASH_TARGETS = [
     'docker/Dockerfile',
+    'docker/__init__.py',
     'docker/scripts/lib',
-    'docker/scripts/orchestrator.sh',
+    'docker/scripts/workflows',
+    'docker/scripts/orchestrator.py',
+    'docker/scripts/__init__.py',
     'docker/prompts',
     'docker/opencode',
     'auth.json',

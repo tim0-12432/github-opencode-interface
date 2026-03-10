@@ -1,4 +1,5 @@
-FROM node:25-bookworm
+# Using Trixie because of Python3.13 compatibility
+FROM node:25-trixie
 
 # Install minimal additional tools
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -13,9 +14,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 # Install Python dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    python3-pip \
-    && rm -rf /var/lib/apt/lists/* \
-    && pip3 install --no-cache-dir PyGithub rich
+    python3-pip python3-rich python3-github \
+    && rm -rf /var/lib/apt/lists/*
 
 # Install OpenCode
 RUN curl -fsSL https://opencode.ai/install | bash
@@ -34,7 +34,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg \
 WORKDIR /workspace
 
 # Copy Python orchestrator and library
-COPY docker/scripts/ /usr/local/lib/python3.11/site-packages/github_opencode_interface/
+COPY docker/scripts/ /usr/lib/python3/dist-packages/github_opencode_interface/
 COPY docker/prompts/ /prompts/
 
 # Create orchestrator entry point
