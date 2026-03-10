@@ -2,21 +2,20 @@
 
 from __future__ import annotations
 
-from ..step import AbstractStep
+from ....lib.config import ModelTier
 from ....lib.context import WorkflowContext
 from ....lib.exceptions import StepExecutionError
+from .opencode_step import AbstractOpencodeStep
 
 
-class ReviewStep(AbstractStep):
+class ReviewStep(AbstractOpencodeStep):
     '''Run the review phase via OpenCode.'''
 
     def __init__(self) -> None:
-        super().__init__(name='Review', retries=0)
+        super().__init__(name='Review', phase='review', model_tier=ModelTier.LARGE)
 
     def run(self, ctx: WorkflowContext) -> None:
-        if ctx.opencode_service is None:
-            raise StepExecutionError('OpenCode service is not available on context.')
-
+        self._require_opencode(ctx)
         ctx.logger.log('Running review...')
         try:
             review_passed_path = ctx.config.state_dir / 'review_passed'
@@ -28,7 +27,7 @@ class ReviewStep(AbstractStep):
         except OSError as exc:
             raise StepExecutionError('Failed to reset review state files.') from exc
 
-        success = ctx.opencode_service.run_phase('review', ctx)
+        success = self._run_opencode_phase(ctx)
         if not success:
             ctx.review_passed = False
             raise StepExecutionError('Review phase failed.')

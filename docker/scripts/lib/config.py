@@ -3,9 +3,18 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from enum import Enum
 from pathlib import Path
 
 from .exceptions import ConfigError, ValidationError
+
+
+class ModelTier(Enum):
+    '''Model cost/capability tiers for OpenCode phases.'''
+
+    SMALL = 'small'
+    STANDARD = 'standard'
+    LARGE = 'large'
 
 
 @dataclass(frozen=True)
@@ -18,6 +27,9 @@ class WorkflowConfig:
     branch: str | None
     opencode_provider: str
     opencode_model: str
+    opencode_small_model: str
+    opencode_standard_model: str
+    opencode_large_model: str
     gh_token: str | None
     anthropic_api_key: str | None
     openai_api_key: str | None
@@ -35,6 +47,26 @@ class WorkflowConfig:
     prompts_dir: Path
     state_dir: Path
     issue_context_path: Path
+
+    def resolve_model(self, tier: ModelTier) -> str:
+        '''Resolve a model tier to a concrete model string.
+
+        Falls back to opencode_model (the legacy single-model field)
+        if a tier-specific value is not configured.
+
+        Args:
+            tier: The model tier to resolve.
+
+        Returns:
+            The concrete model string for the given tier.
+        '''
+        mapping = {
+            ModelTier.SMALL: self.opencode_small_model,
+            ModelTier.STANDARD: self.opencode_standard_model,
+            ModelTier.LARGE: self.opencode_large_model,
+        }
+        resolved = mapping.get(tier, '')
+        return resolved or self.opencode_model
 
     @classmethod
     def from_env(cls, env: dict) -> 'WorkflowConfig':
@@ -60,16 +92,18 @@ class WorkflowConfig:
         issue_value = env.get('ISSUE') or env.get('ISSUE_NUMBER')
         issue = int(issue_value) if issue_value and issue_value.isdigit() else None
 
+        default_model = env.get('OPENCODE_MODEL', 'github-copilot/claude-sonnet-4.5')
+
         return cls(
             github_token=env.get('GITHUB_TOKEN', ''),
             repo=env.get('REPO', ''),
             issue=issue,
             branch=env.get('BRANCH'),
             opencode_provider=env.get('OPENCODE_PROVIDER', 'github-copilot'),
-            opencode_model=env.get(
-                'OPENCODE_MODEL',
-                'github-copilot/claude-sonnet-4.5',
-            ),
+            opencode_model=default_model,
+            opencode_small_model=env.get('OPENCODE_SMALL_MODEL', ''),
+            opencode_standard_model=env.get('OPENCODE_STANDARD_MODEL', ''),
+            opencode_large_model=env.get('OPENCODE_LARGE_MODEL', ''),
             gh_token=env.get('GH_TOKEN') or env.get('GITHUB_TOKEN'),
             anthropic_api_key=env.get('ANTHROPIC_API_KEY'),
             openai_api_key=env.get('OPENAI_API_KEY'),

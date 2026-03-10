@@ -2,39 +2,35 @@
 
 from __future__ import annotations
 
-from ..step import AbstractStep
+from ....lib.config import ModelTier
 from ....lib.context import WorkflowContext
 from ....lib.exceptions import StepExecutionError
+from .opencode_step import AbstractOpencodeStep
 
 
-class ReportPhaseStep(AbstractStep):
+class ReportPhaseStep(AbstractOpencodeStep):
     '''Run a single report phase via OpenCode.'''
 
     def __init__(self, phase: str, label: str | None = None) -> None:
         name = label or f'Report: {phase}'
-        super().__init__(name=name, retries=0)
-        self.phase = phase
+        super().__init__(name=name, phase=phase, model_tier=ModelTier.SMALL)
 
     def run(self, ctx: WorkflowContext) -> None:
-        if ctx.opencode_service is None:
-            raise StepExecutionError('OpenCode service is not available on context.')
-
+        self._require_opencode(ctx)
         ctx.logger.log(f'Running report phase: {self.phase}...')
-        success = ctx.opencode_service.run_phase(self.phase, ctx)
+        success = self._run_opencode_phase(ctx)
         if not success:
             raise StepExecutionError(f'Report phase failed: {self.phase}.')
 
 
-class ReportAggregationStep(AbstractStep):
+class ReportAggregationStep(AbstractOpencodeStep):
     '''Aggregate report outputs into a single summary.'''
 
     def __init__(self) -> None:
-        super().__init__(name='Aggregate Reports', retries=0)
+        super().__init__(name='Aggregate Reports', phase='report-aggregation', model_tier=ModelTier.LARGE)
 
     def run(self, ctx: WorkflowContext) -> None:
-        if ctx.opencode_service is None:
-            raise StepExecutionError('OpenCode service is not available on context.')
-
+        self._require_opencode(ctx)
         ctx.logger.phase('AGGREGATING REPORT')
         review_contents = (
             'SECURITY REPORT:\n'
@@ -51,10 +47,6 @@ class ReportAggregationStep(AbstractStep):
             f'{ctx.state.get_review_report("resource")}\n'
         )
 
-        success = ctx.opencode_service.run_phase(
-            'report-aggregation',
-            ctx,
-            extra_context=review_contents,
-        )
+        success = self._run_opencode_phase(ctx, extra_context=review_contents)
         if not success:
             raise StepExecutionError('Aggregation phase failed.')

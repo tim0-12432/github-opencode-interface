@@ -4,20 +4,20 @@ from __future__ import annotations
 
 import json
 
-from ..step import AbstractStep
+from ....lib.config import ModelTier
 from ....lib.context import WorkflowContext
 from ....lib.exceptions import StepExecutionError
+from .opencode_step import AbstractOpencodeStep
 
 
-class SuggestStep(AbstractStep):
+class SuggestStep(AbstractOpencodeStep):
     '''Run the full suggestion pipeline with refinement loop.'''
 
     def __init__(self) -> None:
-        super().__init__(name='Suggest Issues', retries=0)
+        super().__init__(name='Suggest Issues', phase='suggest-issues', model_tier=ModelTier.STANDARD)
 
     def run(self, ctx: WorkflowContext) -> None:
-        if ctx.opencode_service is None:
-            raise StepExecutionError('OpenCode service is not available on context.')
+        self._require_opencode(ctx)
         if ctx.github is None:
             raise StepExecutionError('GitHub service is not available on context.')
 
@@ -46,11 +46,7 @@ class SuggestStep(AbstractStep):
             f'SUGGESTED_COUNT: {requested_count}\n'
             f'AVAILABLE_LABELS: {",".join(available_labels)}'
         )
-        success = ctx.opencode_service.run_phase(
-            'suggest-issues',
-            ctx,
-            extra_context=extra_context,
-        )
+        success = self._run_opencode_phase(ctx, extra_context=extra_context)
         if not success:
             ctx.logger.warn('Suggest-issues phase had issues, continuing without suggestions')
             return
@@ -170,11 +166,7 @@ class SuggestStep(AbstractStep):
             f'SUGGESTION_JSON: {json.dumps(suggestion)}\n'
             f'AVAILABLE_LABELS: {",".join(available_labels)}'
         )
-        success = ctx.opencode_service.run_phase(
-            'refine-issue',
-            ctx,
-            extra_context=extra_context,
-        )
+        success = self._run_opencode_phase(ctx, phase='refine-issue', extra_context=extra_context)
         if not success:
             ctx.logger.warn(f'Refine-issue phase failed for suggestion #{index}')
             return False

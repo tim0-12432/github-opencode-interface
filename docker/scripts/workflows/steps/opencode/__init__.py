@@ -1,5 +1,6 @@
 '''OpenCode workflow steps.'''
 
+from .opencode_step import AbstractOpencodeStep
 from .analyze_step import AnalyzeStep
 from .implement_step import ImplementStep
 from .report_step import ReportAggregationStep, ReportPhaseStep
@@ -9,6 +10,7 @@ from .review_step import ReviewStep
 from .suggest_step import SuggestStep
 
 __all__ = [
+    'AbstractOpencodeStep',
     'AnalyzeStep',
     'ImplementStep',
     'ReportAggregationStep',

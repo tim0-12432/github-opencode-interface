@@ -55,14 +55,16 @@ def _print_banner(
 
     ctx.logger.banner(title)
     issue_label = f'#{ctx.config.issue}' if ctx.config.issue is not None else 'not set'
-    ctx.logger.log(f'  Workflow:      {mode}')
-    ctx.logger.log(f'  Repository:    {ctx.config.repo or "not set"}')
-    ctx.logger.log(f'  Issue:         {issue_label}')
-    ctx.logger.log(f'  Provider:      {ctx.config.opencode_provider or "github-copilot"}')
-    ctx.logger.log(f'  Model:         {ctx.config.opencode_model or "default"}')
-    ctx.logger.log(f'  Test Cycles:   max {ctx.config.max_test_cycles}')
-    ctx.logger.log(f'  Review Cycles: max {ctx.config.max_review_cycles}')
-    ctx.logger.log(f'  Suggestions:  {suggestions_count}')
+    ctx.logger.log(f'  Workflow:        {mode}')
+    ctx.logger.log(f'  Repository:      {ctx.config.repo or "not set"}')
+    ctx.logger.log(f'  Issue:           {issue_label}')
+    ctx.logger.log(f'  Provider:        {ctx.config.opencode_provider or "github-copilot"}')
+    ctx.logger.log(f'  Model (small):   {ctx.config.opencode_small_model or ctx.config.opencode_model or "default"}')
+    ctx.logger.log(f'  Model (standard): {ctx.config.opencode_standard_model or ctx.config.opencode_model or "default"}')
+    ctx.logger.log(f'  Model (large):   {ctx.config.opencode_large_model or ctx.config.opencode_model or "default"}')
+    ctx.logger.log(f'  Test Cycles:     max {ctx.config.max_test_cycles}')
+    ctx.logger.log(f'  Review Cycles:   max {ctx.config.max_review_cycles}')
+    ctx.logger.log(f'  Suggestions:     {suggestions_count}')
     ctx.logger.log('')
 
 
@@ -92,7 +94,6 @@ def main() -> int:
         github = GitHubService(config.github_token, config.repo)
         git_service = GitService(config.work_dir, config.github_token)
         opencode_service = OpenCodeService(
-            model=config.opencode_model,
             work_dir=config.work_dir,
         )
         testing_service = TestingService(config.work_dir)

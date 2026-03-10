@@ -1,6 +1,6 @@
 '''Core workflow services and utilities.'''
 
-from .config import WorkflowConfig
+from .config import ModelTier, WorkflowConfig
 from .context import WorkflowContext
 from .git_service import GitService
 from .github_service import GitHubService
@@ -13,6 +13,7 @@ from .testing_service import TestingService
 __all__ = [
     'GitHubService',
     'GitService',
+    'ModelTier',
     'OpenCodeService',
     'PromptService',
     'StateManager',

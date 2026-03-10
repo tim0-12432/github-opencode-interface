@@ -2,21 +2,20 @@
 
 from __future__ import annotations
 
-from ..step import AbstractStep
+from ....lib.config import ModelTier
 from ....lib.context import WorkflowContext
 from ....lib.exceptions import StepExecutionError
+from .opencode_step import AbstractOpencodeStep
 
 
-class FixTestsStep(AbstractStep):
+class FixTestsStep(AbstractOpencodeStep):
     '''Run the fix-tests phase via OpenCode.'''
 
     def __init__(self) -> None:
-        super().__init__(name='Fix Tests', retries=0)
+        super().__init__(name='Fix Tests', phase='fix-tests', model_tier=ModelTier.STANDARD)
 
     def run(self, ctx: WorkflowContext) -> None:
-        if ctx.opencode_service is None:
-            raise StepExecutionError('OpenCode service is not available on context.')
-
-        success = ctx.opencode_service.run_phase('fix-tests', ctx)
+        self._require_opencode(ctx)
+        success = self._run_opencode_phase(ctx)
         if not success:
             raise StepExecutionError('Fix-tests phase failed.')
