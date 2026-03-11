@@ -14,7 +14,7 @@ class SuggestStep(AbstractOpencodeStep):
     '''Run the full suggestion pipeline with refinement loop.'''
 
     def __init__(self) -> None:
-        super().__init__(name='Suggest Issues', phase='suggest-issues', model_tier=ModelTier.STANDARD)
+        super().__init__(name='Suggest Issues', phase='suggest-issues', model_tier=ModelTier.STANDARD, expected_artifacts=['/workspace/.state/suggested_issues.json'])
 
     def run(self, ctx: WorkflowContext) -> None:
         self._require_opencode(ctx)

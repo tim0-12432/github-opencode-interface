@@ -18,8 +18,8 @@ class ReviewStep(AbstractOpencodeStep):
         self._require_opencode(ctx)
         ctx.logger.log('Running review...')
         try:
-            review_passed_path = ctx.config.state_dir / 'review_passed'
-            review_feedback_path = ctx.config.state_dir / 'review_feedback'
+            review_passed_path = ctx.config.state_dir / 'review_passed.md'
+            review_feedback_path = ctx.config.state_dir / 'review_feedback.md'
             if review_passed_path.exists():
                 review_passed_path.unlink()
             if review_feedback_path.exists():
@@ -38,7 +38,7 @@ class ReviewStep(AbstractOpencodeStep):
             return
 
         if review_feedback_path.exists():
-            feedback = ctx.state.load('review_feedback', '')
+            feedback = ctx.state.load('review_feedback.md', '')
             if not feedback:
                 feedback = review_feedback_path.read_text(encoding='utf-8')
             ctx.state.save_review_feedback(feedback)

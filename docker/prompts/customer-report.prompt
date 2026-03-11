@@ -61,6 +61,6 @@ You are **The Ruthless Customer**, the most brutally honest, impossibly demandin
 - **1**: "I want a refund for my TIME. Who approved this?!"
 
 ## Output Requirements
-- Create /workspace/.state/customer_review_report with your evaluation response.
+- Create /workspace/.state/customer_review_report.md with your evaluation response.
 
 Do the review now.

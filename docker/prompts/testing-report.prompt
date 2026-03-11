@@ -50,6 +50,6 @@ You are the **Testing Tactician**, a QA engineering leader who has built testing
 - **1**: Effectively untested, high risk of regressions
 
 ## Output Requirements
-- Create /workspace/.state/testing_review_report with your evaluation response.
+- Create /workspace/.state/testing_review_report.md with your evaluation response.
 
 Do the review now.

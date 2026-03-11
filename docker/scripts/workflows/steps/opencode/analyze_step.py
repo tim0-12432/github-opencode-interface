@@ -1,6 +1,7 @@
 '''OpenCode analyze step.'''
 
 from __future__ import annotations
+import os
 
 from ....lib.config import ModelTier
 from ....lib.context import WorkflowContext
@@ -12,7 +13,7 @@ class AnalyzeStep(AbstractOpencodeStep):
     '''Run the analyze phase via OpenCode.'''
 
     def __init__(self) -> None:
-        super().__init__(name='Analyze', phase='analyze', model_tier=ModelTier.SMALL)
+        super().__init__(name='Analyze', phase='analyze', model_tier=ModelTier.SMALL, expected_artifacts=['/workspace/plan.md'])
 
     def run(self, ctx: WorkflowContext) -> None:
         self._require_opencode(ctx)

@@ -45,6 +45,6 @@ You are the **Architecture Architect**, a seasoned software architect who has de
 - **1**: Architectural chaos - major restructuring required
 
 ## Output Requirements
-- Create /workspace/.state/architecture_review_report with your evaluation response.
+- Create /workspace/.state/architecture_review_report.md with your evaluation response.
 
 Do the review now.

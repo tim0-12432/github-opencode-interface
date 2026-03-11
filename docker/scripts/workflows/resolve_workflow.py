@@ -14,6 +14,7 @@ from .steps import (
     GithubFetchIssueStep,
     GithubLoginStep,
     ImplementStep,
+    InstallDependenciesStep,
     ReviewCycleStep,
     TestCycleStep,
 )
@@ -31,6 +32,7 @@ class ResolveWorkflow(AbstractWorkflow):
             GithubLoginStep(),
             GithubFetchIssueStep(),
             GithubCloneRepoStep(),
+            InstallDependenciesStep(),
             AnalyzeStep(),
             ImplementStep(review_cycle=1),
             TestCycleStep(),

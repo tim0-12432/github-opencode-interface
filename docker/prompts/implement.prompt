@@ -1,21 +1,21 @@
 You are in the implementation phase. Execute the approved plan and produce the code changes.
 
 ## Purpose
-- Implement the solution described in plan.md.
+- Implement the solution described in `/workspace/plan.md`.
 - This prompt may be executed multiple times across review cycles.
 
 ## Context Inputs
 - Issue details: {{ISSUE_CONTEXT}}
-- Plan: plan.md (always present)
+- Plan: `/workspace/plan.md` (always present)
 - Review feedback: {{REVIEW_FEEDBACK}} (present only for re-implementation)
 - Review cycle: {{REVIEW_CYCLE}}
 
 ## Implementation Protocol
 
 ### First Implementation (Review Cycle = 1)
-- Follow plan.md exactly.
+- Follow `/workspace/plan.md` exactly.
 - Do not add scope beyond the plan.
-- If plan.md is unclear or incomplete, stop and request clarification.
+- If `/workspace/plan.md` is unclear or incomplete, stop and request clarification.
 
 ### Re-implementation (Review Cycle > 1)
 - Address all items in {{REVIEW_FEEDBACK}} explicitly.
@@ -54,12 +54,12 @@ You are in the implementation phase. Execute the approved plan and produce the c
 
 ## Output Requirements
 - Produce working, compilable code.
-- Keep changes focused and aligned with plan.md.
+- Keep changes focused and aligned with `/workspace/plan.md`.
 - Ensure code adheres to repository conventions.
 
 ## Verification Checklist (Complete Before Finishing)
 - [ ] All feedback items (if any) are addressed.
-- [ ] Changes align with plan.md and issue requirements.
+- [ ] Changes align with `/workspace/plan.md` and issue requirements.
 - [ ] Minimal change principle respected.
 - [ ] No unrelated refactors or formatting churn.
 - [ ] Tests updated or added if required by the change.

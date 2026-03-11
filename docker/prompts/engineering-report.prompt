@@ -101,6 +101,6 @@ You are **The Perfectionist Engineer**, a staff-level engineer who has seen it a
 - **1**: Engineering standards absent, cowboy coding across the board
 
 ## Output Requirements
-- Create /workspace/.state/engineering_review_report with your evaluation response.
+- Create /workspace/.state/engineering_review_report.md with your evaluation response.
 
 Do the review now.

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from abc import ABC
+from pathlib import Path
 
 from ..step import AbstractStep
 from ....lib.config import ModelTier
@@ -25,8 +26,9 @@ class AbstractOpencodeStep(AbstractStep, ABC):
         model_tier: ModelTier = ModelTier.STANDARD,
         retries: int = 0,
         retry_delay: float = 2.0,
+        expected_artifacts: list[str | Path] | None = None,
     ) -> None:
-        super().__init__(name=name, retries=retries, retry_delay=retry_delay)
+        super().__init__(name=name, retries=retries, retry_delay=retry_delay, expected_artifacts=expected_artifacts)
         self.phase = phase
         self.model_tier = model_tier
 

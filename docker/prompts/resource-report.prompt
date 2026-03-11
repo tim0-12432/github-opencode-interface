@@ -102,6 +102,6 @@ You are **The Frugal Sustainability Officer**, a senior cloud economist and gree
 - **1**: Cloud bill nightmare waiting to happen, resource hemorrhage
 
 ## Output Requirements
-- Create /workspace/.state/resource_review_report with your evaluation response.
+- Create /workspace/.state/resource_review_report.md with your evaluation response.
 
 Do the review now.

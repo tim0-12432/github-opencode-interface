@@ -12,11 +12,11 @@ Add test coverage for the implementation. The tests must validate behavior intro
 ## Context You Must Use
 - Issue details from the context above
 - Implementation diff (review with `git diff`)
-- plan.md (follow the intended plan)
+- `/workspace/plan.md` (follow the intended plan)
 - Test framework detection (use {{TEST_FRAMEWORK}})
 
 ## Test Planning Protocol (4 Steps)
-- [ ] 1. **Understand scope**: Identify all behavior changes from the diff and plan.md.
+- [ ] 1. **Understand scope**: Identify all behavior changes from the diff and `/workspace/plan.md`.
 - [ ] 2. **Enumerate scenarios**: Happy path, edge cases, and error conditions for each change.
 - [ ] 3. **Map to tests**: Decide which files/tests to update or add, following existing patterns.
 - [ ] 4. **Verify coverage**: Ensure tests cover all new behavior and guard against regressions.

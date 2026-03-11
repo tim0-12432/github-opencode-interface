@@ -1,6 +1,7 @@
 '''OpenCode report steps for review workflow.'''
 
 from __future__ import annotations
+from datetime import date
 
 from ....lib.config import ModelTier
 from ....lib.context import WorkflowContext
@@ -13,7 +14,7 @@ class ReportPhaseStep(AbstractOpencodeStep):
 
     def __init__(self, phase: str, label: str | None = None) -> None:
         name = label or f'Report: {phase}'
-        super().__init__(name=name, phase=phase, model_tier=ModelTier.SMALL)
+        super().__init__(name=name, phase=phase, model_tier=ModelTier.SMALL, expected_artifacts=[f'/workspace/.state/{phase}_review_report.md'])
 
     def run(self, ctx: WorkflowContext) -> None:
         self._require_opencode(ctx)
@@ -27,7 +28,8 @@ class ReportAggregationStep(AbstractOpencodeStep):
     '''Aggregate report outputs into a single summary.'''
 
     def __init__(self) -> None:
-        super().__init__(name='Aggregate Reports', phase='report-aggregation', model_tier=ModelTier.LARGE)
+        today = date.today().strftime('%Y-%m-%d')
+        super().__init__(name='Aggregate Reports', phase='report-aggregation', model_tier=ModelTier.LARGE, expected_artifacts=[f'/workspace/repo/reports/{today}.md'])
 
     def run(self, ctx: WorkflowContext) -> None:
         self._require_opencode(ctx)
